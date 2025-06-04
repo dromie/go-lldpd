@@ -62,11 +62,22 @@ func main() {
 	log := slog.New(jsonHandler)
 	log.Info("lldpd", "version", v.V)
 	b, err := os.ReadFile(installYaml)
-	if err != nil {
-		log.Error("lldpd", "unable to open config", err)
-		os.Exit(1)
-	}
 	i := &installerConfig{}
+	if err != nil {
+		log.Warn("lldpd", "unable to open config", err)
+		if len(os.Args) > 1 {
+			i.MachineUUID = os.Args[1]
+			log.Info("lldpd using", "sysName", os.Args[1])
+		} else {
+			i.MachineUUID, err = os.Hostname()
+			if err != nil {
+				log.Error("lldpd", "unable to get hostname", err)
+				os.Exit(1)
+			}
+			log.Info("lldpd using", "sysName", i.MachineUUID)
+		}
+		i.Timestamp = time.Now().Format(time.RFC3339)
+	}
 	err = yaml.Unmarshal(b, &i)
 	if err != nil {
 		log.Error("lldpd", "unable to parse config", err)

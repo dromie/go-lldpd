@@ -8,8 +8,10 @@ It is configured from a yaml file `/etc/metal/install.yaml`:
 machineuuid: 3be6c846-57de-432a-b50e-61c6c559b6bb
 timestamp: 2006-01-02T15:04:05Z07:00
 ```
-
 The config file location cannot be modified.
+
+If config file cannot be found, then sysName will be either the first commandline argument, or the hostname (if no command line arg)
+
 go-lldpd also expects 2 distinct uplinks to the switch, otherwise it will die.
 
 Example systemd service is also bundled.
